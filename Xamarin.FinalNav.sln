@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.FinalNav", "Xamarin.FinalNav.csproj", "{D70D3061-0660-4255-94AC-F4A695846B3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.FinalNav", "src\Xamarin.FinalNav\Xamarin.FinalNav.csproj", "{D70D3061-0660-4255-94AC-F4A695846B3A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{FDF35626-01E3-4815-81BE-D8CA6326BF90}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinalNav.Sample", "..\..\sample\FinalNav.Sample\FinalNav.Sample.csproj", "{7316469F-6775-4B98-9017-F03737FF7805}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinalNav.Sample", "sample\FinalNav.Sample\FinalNav.Sample.csproj", "{7316469F-6775-4B98-9017-F03737FF7805}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinalNav.Sample.Android", "..\..\sample\FinalNav.Sample.Android\FinalNav.Sample.Android.csproj", "{0CAEE09F-A622-4E47-AB5D-0404813297D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinalNav.Sample.Android", "sample\FinalNav.Sample.Android\FinalNav.Sample.Android.csproj", "{0CAEE09F-A622-4E47-AB5D-0404813297D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.FinalNav.Test", "..\Xamarin.FinalNav.Test\Xamarin.FinalNav.Test.csproj", "{A1355B54-926B-4418-8EC9-CBFC008A397A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.FinalNav.Test", "src\Xamarin.FinalNav.Test\Xamarin.FinalNav.Test.csproj", "{A1355B54-926B-4418-8EC9-CBFC008A397A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{1607F405-E281-4919-836F-62DC3B278D75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7316469F-6775-4B98-9017-F03737FF7805} = {FDF35626-01E3-4815-81BE-D8CA6326BF90}
 		{0CAEE09F-A622-4E47-AB5D-0404813297D2} = {FDF35626-01E3-4815-81BE-D8CA6326BF90}
+		{A1355B54-926B-4418-8EC9-CBFC008A397A} = {1607F405-E281-4919-836F-62DC3B278D75}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A182CE6-195A-4865-966F-53578803E6EF}
