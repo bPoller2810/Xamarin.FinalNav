@@ -1,8 +1,10 @@
-# Xamarin.FinalCtrl
+# Xamarin.FinalNav
 
 Get your Xamarin.Forms Pages and ViewModels into the real DI world.
 
 ![Nuget](https://img.shields.io/nuget/v/Xamarin.FinalNav?style=plastic)
+
+![Tests](https://github.com/bpoller2810/Xamarin.FinalNav/workflows/Tests/badge.svg)
 
 ## How to:
 
