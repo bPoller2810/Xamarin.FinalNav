@@ -1,0 +1,11 @@
+name: Tests
+
+on: push
+
+jobs:
+  tests:
+    name: NUnit Tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - run: dotnet test src/Xamarin.FinalNav.Test/Xamarin.FinalNav.Test.csproj
