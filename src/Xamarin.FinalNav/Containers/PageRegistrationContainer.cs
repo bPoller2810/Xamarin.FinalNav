@@ -32,11 +32,8 @@ namespace Xamarin.FinalNav.Containers
         {
             var constructor = DIHelper.GetBestMatchingConstructor(VmType, services, userParameters);
             var instance = constructor.CreateObject();
-            if (instance is not INotifyPropertyChanged notifyPropertyChanged)
-            {
-                throw new InvalidCastException($"{VmType} has to implement INotifyPropertyChanged");
-            }
-            return notifyPropertyChanged;
+
+            return (INotifyPropertyChanged)instance;
         }
 
         private ContentPage GetPage(IReadOnlyList<ServiceRegistrationContainer> services, params NavigationParameter[] userParameters)

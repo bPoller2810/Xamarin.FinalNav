@@ -41,7 +41,7 @@ namespace Xamarin.FinalNav
         #endregion
 
         #region system
-        private bool _initialized;
+        public bool Initialized { get; private set; }
         private Application _app;
         private INavigation _navigation;
 
@@ -50,7 +50,7 @@ namespace Xamarin.FinalNav
         {
             lock (_initLock)
             {
-                if (_initialized)
+                if (Initialized)
                 {
                     throw new InvalidOperationException("FinalNavigator is already initialized");
                 }
@@ -67,7 +67,7 @@ namespace Xamarin.FinalNav
                 var page = GetPage<TRootPage>();
                 _app.MainPage = new NavigationPage(page);
                 _navigation = _app.MainPage.Navigation;
-                _initialized = true;
+                Initialized = true;
             }
         }
 
@@ -79,7 +79,7 @@ namespace Xamarin.FinalNav
                 _navigation = null;
                 _services.Clear();
                 _pages.Clear();
-                _initialized = false;
+                Initialized = false;
             }
         }
         #endregion
@@ -91,12 +91,15 @@ namespace Xamarin.FinalNav
             where TServiceType : class
             where TServiceImplementation : class, TServiceType
         {
-            if (_initialized)
+            if (Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is already initialized");
             }
             var serviceType = typeof(TServiceType);
-            if (!serviceType.IsInterface) { throw new NotSupportedException($"{serviceType.Name} must be an Interface"); }
+            if (!serviceType.IsInterface) 
+            { 
+                throw new NotSupportedException($"{serviceType.Name} must be an Interface");
+            }
 
             var implementationType = typeof(TServiceImplementation);
 
@@ -121,7 +124,7 @@ namespace Xamarin.FinalNav
             where TPage : ContentPage
             where TVm : INotifyPropertyChanged
         {
-            if (_initialized)
+            if (Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is already initialized");
             }
@@ -155,12 +158,22 @@ namespace Xamarin.FinalNav
         #region navigation
 
         #region management
-        public INavigation Navigation => _navigation;
+        public INavigation Navigation
+        {
+            get
+            {
+                if (!Initialized)
+                {
+                    throw new InvalidOperationException("FinalNavigator is not initialized");
+                }
+                return _navigation;
+            }
+        }
         public IReadOnlyList<NavigationItem> NavigationStack
         {
             get
             {
-                if (!_initialized)
+                if (!Initialized)
                 {
                     throw new InvalidOperationException("FinalNavigator is not initialized");
                 }
@@ -176,20 +189,16 @@ namespace Xamarin.FinalNav
         public async Task PushAsync<TPage>(params NavigationParameter[] userParameters)
             where TPage : ContentPage
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
             var page = GetPage<TPage>(userParameters);
-            if (page is null)
-            {
-                throw new InvalidOperationException($"{typeof(TPage).Name} is not registered");
-            }
             await _navigation.PushAsync(page);
         }
         public async Task PopAsync()
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
@@ -197,7 +206,7 @@ namespace Xamarin.FinalNav
         }
         public async Task PopToRootAsync()
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
@@ -209,20 +218,17 @@ namespace Xamarin.FinalNav
         public async Task PushModalAsync<TPage>()
             where TPage : ContentPage
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
             var page = GetPage<TPage>();
-            if (page is null)
-            {
-                throw new InvalidOperationException($"{typeof(TPage).Name} is not registered");
-            }
+
             await _navigation.PushModalAsync(page);
         }
         public async Task PopModalAsync()
         {
-            if (!_initialized)
+            if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
