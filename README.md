@@ -2,7 +2,7 @@
 
 Get your Xamarin.Forms Pages and ViewModels into the real DI world.
 
-![Nuget](https://img.shields.io/nuget/v/Xamarin.FinalNav?style=plastic)
+![Nuget](https://img.shields.io/nuget/v/Xamarin.FinalNav?logo=NuGet)
 
 ![Tests](https://github.com/bpoller2810/Xamarin.FinalNav/workflows/Tests/badge.svg)
 
