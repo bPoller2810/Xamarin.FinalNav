@@ -16,6 +16,16 @@ namespace Xamarin.FinalNav.Containers
         public EServiceLifetime Lifetime { get; init; }
         #endregion
 
+        #region ctor
+        public ServiceRegistrationContainer()
+        {
+        }
+        public ServiceRegistrationContainer(object instance) : this()
+        {
+            Instance = instance;
+        }
+        #endregion
+
         #region public methods
         public object GetInstance(IReadOnlyList<ServiceRegistrationContainer> services)
         {

@@ -9,191 +9,52 @@ using Xamarin.Forms;
 
 namespace Xamarin.FinalNav
 {
-    public sealed class FinalNavigator
+    public sealed class FinalNavigator : INavigationService
     {
 
-        #region threadsafe singleton
-        private static readonly object _lock = new object();
-        private static FinalNavigator _instance;
-        private FinalNavigator()
-        {
-            _services = new List<ServiceRegistrationContainer>();
-            _pages = new List<PageRegistrationContainer>();
-        }
-        public static FinalNavigator Instance
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    if (_instance is null)
-                    {
-                        _instance = new FinalNavigator();
-                    }
-                    return _instance;
-                }
-            }
-        }
-        #endregion
-
-        #region locks
-        private static readonly object _initLock = new object();
-        #endregion
-
-        #region system
+        #region private member
         public bool Initialized { get; private set; }
-        private Application _app;
+        private readonly Application _app;
         private INavigation _navigation;
+        private readonly FinalIoc _iocContainer;
+        #endregion
 
-        public void InitializeRoot<TRootPage>(Application app)
-            where TRootPage : ContentPage
+        #region ctor
+        public FinalNavigator(Application app, FinalIoc iocContainer)
         {
-            lock (_initLock)
+            _iocContainer = iocContainer;
+            if (!_iocContainer.IsRegistered<INavigationService>())
             {
-                if (Initialized)
-                {
-                    throw new InvalidOperationException("FinalNavigator is already initialized");
-                }
-                if (_pages.Count == 0)
-                {
-                    throw new InvalidOperationException("Register your pages first");
-                }
-                if (app is null)
-                {
-                    throw new ArgumentNullException(nameof(app));
-                }
-                _app = app;
-
-                var page = GetPage<TRootPage>();
-                _app.MainPage = new NavigationPage(page);
-                _navigation = _app.MainPage.Navigation;
-                Initialized = true;
+                _iocContainer.RegisterService<INavigationService>(this);
             }
-        }
-
-        public void CleanSystem()
-        {
-            lock (_initLock)
+            if (app is null)
             {
-                _app = null;
-                _navigation = null;
-                _services.Clear();
-                _pages.Clear();
-                Initialized = false;
+                throw new ArgumentNullException(nameof(app));
             }
+            _app = app;
         }
         #endregion
 
-        #region services
-        private readonly List<ServiceRegistrationContainer> _services;
-
-        public void RegisterService<TServiceType, TServiceImplementation>(EServiceLifetime lifetime = EServiceLifetime.Singleton)
-            where TServiceType : class
-            where TServiceImplementation : class, TServiceType
+        #region public init
+        public void Build<TRootPage>()
+            where TRootPage : Page
         {
-            if (Initialized)
-            {
-                throw new InvalidOperationException("FinalNavigator is already initialized");
-            }
-            var serviceType = typeof(TServiceType);
-            if (!serviceType.IsInterface) 
-            { 
-                throw new NotSupportedException($"{serviceType.Name} must be an Interface");
-            }
-
-            var implementationType = typeof(TServiceImplementation);
-
-            if (_services.Any(s => s.ServiceType.Equals(serviceType) && s.ServiceImplementation.Equals(implementationType)))
-            {
-                throw new ArgumentException("Interface <-> Implementation combination already registered");
-            }
-
-            _services.Add(new ServiceRegistrationContainer
-            {
-                ServiceType = serviceType,
-                ServiceImplementation = implementationType,
-                Lifetime = lifetime,
-            });
-        }
-        #endregion
-
-        #region pages
-        private readonly List<PageRegistrationContainer> _pages;
-
-        public void RegisterPage<TPage, TVm>()
-            where TPage : ContentPage
-            where TVm : INotifyPropertyChanged
-        {
-            if (Initialized)
-            {
-                throw new InvalidOperationException("FinalNavigator is already initialized");
-            }
-            var pageType = typeof(TPage);
-            var vmType = typeof(TVm);
-
-            if (_pages.Any(p => p.PageType.Equals(pageType) && p.VmType.Equals(vmType)))
-            {
-                throw new ArgumentException("Page <-> ViewModel combination already registered");
-            }
-
-            _pages.Add(new PageRegistrationContainer
-            {
-                PageType = pageType,
-                VmType = vmType,
-            });
-        }
-
-        private TPage GetPage<TPage>(params NavigationParameter[] userParameters)
-            where TPage : ContentPage
-        {
-            var pageType = typeof(TPage);
-
-            var container = _pages.FirstOrDefault(p => p.PageType.Equals(pageType));
-            if (container is null) { throw new ArgumentException($"Page of Type {pageType.Name} not found"); }
-
-            return (TPage)container.GetInstance(_services, userParameters);
-        }
-        #endregion
-
-        #region navigation
-
-        #region management
-        public INavigation Navigation
-        {
-            get
-            {
-                if (!Initialized)
-                {
-                    throw new InvalidOperationException("FinalNavigator is not initialized");
-                }
-                return _navigation;
-            }
-        }
-        public IReadOnlyList<NavigationItem> NavigationStack
-        {
-            get
-            {
-                if (!Initialized)
-                {
-                    throw new InvalidOperationException("FinalNavigator is not initialized");
-                }
-                return _navigation.NavigationStack.Select(s => new NavigationItem
-                {
-                    PageType = s.GetType(),
-                }).ToList();
-            }
+            var page = _iocContainer.GetPage<TRootPage>();
+            _app.MainPage = new NavigationPage(page);
+            _navigation = _app.MainPage.Navigation;
+            Initialized = true;
         }
         #endregion
 
         #region stack
         public async Task PushAsync<TPage>(params NavigationParameter[] userParameters)
-            where TPage : ContentPage
+            where TPage : Page
         {
             if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
-            var page = GetPage<TPage>(userParameters);
+            var page = _iocContainer.GetPage<TPage>(userParameters);
             await _navigation.PushAsync(page);
         }
         public async Task PopAsync()
@@ -215,15 +76,14 @@ namespace Xamarin.FinalNav
         #endregion
 
         #region modal stack
-        public async Task PushModalAsync<TPage>()
-            where TPage : ContentPage
+        public async Task PushModalAsync<TPage>(params NavigationParameter[] userParameters)
+            where TPage : Page
         {
             if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
-            var page = GetPage<TPage>();
-
+            var page = _iocContainer.GetPage<TPage>(userParameters);
             await _navigation.PushModalAsync(page);
         }
         public async Task PopModalAsync()
@@ -236,7 +96,6 @@ namespace Xamarin.FinalNav
         }
         #endregion
 
-        #endregion
     }
 
 }

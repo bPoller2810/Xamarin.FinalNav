@@ -17,7 +17,7 @@ namespace Xamarin.FinalNav.Containers
         #endregion
 
         #region public methods
-        public ContentPage GetInstance(IReadOnlyList<ServiceRegistrationContainer> services, params NavigationParameter[] userParameters)
+        public Page GetInstance(IReadOnlyList<ServiceRegistrationContainer> services, params NavigationParameter[] userParameters)
         {
             var page = GetPage(services, userParameters?.Where(p => p.Type == EParameterType.Page).ToArray());
             var vm = GetVMInstance(services, userParameters?.Where(p => p.Type == EParameterType.ViewModel).ToArray());
@@ -25,9 +25,9 @@ namespace Xamarin.FinalNav.Containers
             page.BindingContext = vm;
             return page;
         }
-
         #endregion
 
+        #region private helper
         private INotifyPropertyChanged GetVMInstance(IReadOnlyList<ServiceRegistrationContainer> services, params NavigationParameter[] userParameters)
         {
             var constructor = DIHelper.GetBestMatchingConstructor(VmType, services, userParameters);
@@ -36,16 +36,17 @@ namespace Xamarin.FinalNav.Containers
             return (INotifyPropertyChanged)instance;
         }
 
-        private ContentPage GetPage(IReadOnlyList<ServiceRegistrationContainer> services, params NavigationParameter[] userParameters)
+        private Page GetPage(IReadOnlyList<ServiceRegistrationContainer> services, params NavigationParameter[] userParameters)
         {
             var constructor = DIHelper.GetBestMatchingConstructor(PageType, services, userParameters);
             var instance = constructor.CreateObject();
-            if (instance is not ContentPage page)
+            if (instance is not Page page)
             {
                 throw new InvalidCastException($"{PageType} must extend ContentPage");
             }
             return page;
         }
+        #endregion
 
     }
 }
