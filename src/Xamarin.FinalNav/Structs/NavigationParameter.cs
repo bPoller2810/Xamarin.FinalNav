@@ -18,6 +18,10 @@ namespace Xamarin.FinalNav
         {
             Type = EParameterType.Page;
         }
+        public PageParameter(object parameter) : this()
+        {
+            Parameter = parameter;
+        }
     }
 
     public class ViewModelParameter : NavigationParameter
@@ -25,6 +29,10 @@ namespace Xamarin.FinalNav
         public ViewModelParameter()
         {
             Type = EParameterType.ViewModel;
+        }
+        public ViewModelParameter(object parameter) : this()
+        {
+            Parameter = parameter;
         }
     }
 

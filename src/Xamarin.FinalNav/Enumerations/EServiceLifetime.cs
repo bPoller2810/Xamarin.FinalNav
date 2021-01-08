@@ -2,7 +2,7 @@
 {
     public enum EServiceLifetime
     {
-        AlwaysFresh = 1,
+        NewInstance = 1,
         Singleton = 2,
     }
 }

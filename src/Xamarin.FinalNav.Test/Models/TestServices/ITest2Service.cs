@@ -1,8 +1,7 @@
 ﻿namespace Xamarin.FinalNav.Test.Models.TestServices
 {
-    public interface ITestService
+    public interface ITest2Service
     {
-        void OutputTime();
+        void None();
     }
-
 }

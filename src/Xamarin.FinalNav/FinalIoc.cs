@@ -12,8 +12,8 @@ namespace Xamarin.FinalNav
     {
 
         #region private member
-        private readonly List<ServiceRegistrationContainer> _services;
-        private readonly List<PageRegistrationContainer> _pages;
+        internal readonly List<ServiceRegistrationContainer> _services;
+        internal readonly List<PageRegistrationContainer> _pages;
         #endregion
 
         public FinalIoc()
@@ -61,6 +61,10 @@ namespace Xamarin.FinalNav
         public void RegisterService<TServiceType>(TServiceType instance)
             where TServiceType : class
         {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
             var serviceType = typeof(TServiceType);
             if (!serviceType.IsInterface)
             {
@@ -74,6 +78,7 @@ namespace Xamarin.FinalNav
             _services.Add(new ServiceRegistrationContainer(instance)
             {
                 ServiceType = serviceType,
+                ServiceImplementation = instance.GetType(),
             });
         }
 
@@ -98,19 +103,27 @@ namespace Xamarin.FinalNav
         #endregion
 
         #region remove
-        public void RemoveService<TServiceType>()
+        public bool RemoveService<TServiceType>()
             where TServiceType : class
         {
-            if (typeof(TServiceType) is INavigationService) { return; }
+            if (typeof(TServiceType).Equals(typeof(INavigationService))) { return false; }
 
             var serviceType = typeof(TServiceType);
-            _services.RemoveAll(s => s.ServiceType.Equals(serviceType));
+            return _services.RemoveAll(s => s.ServiceType.Equals(serviceType)) > 0;
         }
-        public void RemovePage<TPage>()
+        public bool RemovePage<TPage>()
             where TPage : Page
         {
             var pageType = typeof(TPage);
-            _pages.RemoveAll(p => p.PageType.Equals(pageType));
+            return _pages.RemoveAll(p => p.PageType.Equals(pageType)) > 0;
+        }
+        public bool RemovePage<TPage, TViewModel>()
+            where TPage : Page
+            where TViewModel : INotifyPropertyChanged
+        {
+            var pageType = typeof(TPage);
+            var vmType = typeof(TViewModel);
+            return _pages.RemoveAll(p => p.PageType.Equals(pageType) && p.VmType.Equals(vmType)) > 0;
         }
         #endregion
 
@@ -121,6 +134,21 @@ namespace Xamarin.FinalNav
             var pageType = typeof(TPage);
 
             var container = _pages.FirstOrDefault(p => p.PageType.Equals(pageType));
+            if (container is null)
+            {
+                throw new ArgumentException($"Page of Type {pageType.Name} not found");
+            }
+
+            return (TPage)container.GetInstance(_services, userParameters);
+        }
+        public TPage GetPage<TPage, TViewModel>(params NavigationParameter[] userParameters)
+            where TPage : Page
+            where TViewModel : INotifyPropertyChanged
+        {
+            var pageType = typeof(TPage);
+            var vmType = typeof(TViewModel);
+
+            var container = _pages.FirstOrDefault(p => p.PageType.Equals(pageType) && p.VmType.Equals(vmType));
             if (container is null)
             {
                 throw new ArgumentException($"Page of Type {pageType.Name} not found");
