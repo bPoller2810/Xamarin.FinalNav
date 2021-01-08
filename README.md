@@ -33,7 +33,7 @@ ioc.RegisterService<IPlatformDependentService, AndroidPlatformService>();
 ```c#
 LoadApplication(new App(ioc));
 ```
-Note: "App.xaml.cs" needs the FinalIoc in the constructor
+Note: "App.xaml.cs" needs the FinalIoc as constructor parameter
 
 ---
 ### 4 Register common code services [App.xaml.cs](sample/FinalNav.Sample/App.xaml.cs) 
@@ -55,7 +55,7 @@ new FinalNavigator(this, container).Build<LoginPage>();
 ```
 
 ---
-### 7 Navigate [LoginPageViewModel](sample/FinalNav.Sample/ViewModels/LoginPageViewModel.cs)
+### 7 Navigate [LoginPageViewModel.cs](sample/FinalNav.Sample/ViewModels/LoginPageViewModel.cs)
 
 To be able to Navigate include the "INavigationService" interface in the Page/ViewModel constructor:
 ```c#
@@ -70,7 +70,7 @@ await FinalNavigator.Instance.PushAsync<UserPage>(new NavigationParameter
     Parameter = Username,
 });
 ```
-Note you also be able to use the following classes with theyre constructors:
+Note you also be able to use the following class constructors:
 ```c#
 public PageParameter(object parameter)
 public ViewModelParameter(object parameter)
