@@ -10,17 +10,17 @@ namespace FinalNav.Sample
 {
     public partial class App : Application
     {
-        public App()
+        public App(FinalIoc container)
         {
             InitializeComponent();
 
-            FinalNavigator.Instance.RegisterService<IDemoService, DefaultDemoService>();
 
-            FinalNavigator.Instance.RegisterPage<LoginPage, LoginPageViewModel>();
-            FinalNavigator.Instance.RegisterPage<UserPage, UserPageViewModel>();
+            container.RegisterService<IDemoService, DefaultDemoService>();
 
-            FinalNavigator.Instance.InitializeRoot<LoginPage>(this);
+            container.RegisterPage<LoginPage, LoginPageViewModel>();
+            container.RegisterPage<UserPage, UserPageViewModel>();
 
+            new FinalNavigator(this, container).Build<LoginPage>();
         }
 
         protected override void OnStart()

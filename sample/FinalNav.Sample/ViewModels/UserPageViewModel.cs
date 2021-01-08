@@ -1,8 +1,5 @@
 ﻿using FinalNav.Sample.Services;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using Xamarin.FinalCtrl.Helper;
 
 namespace FinalNav.Sample.ViewModels

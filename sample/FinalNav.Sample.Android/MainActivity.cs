@@ -22,7 +22,6 @@ namespace FinalNav.Sample.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            FinalNavigator.Instance.CleanSystem();
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
@@ -32,9 +31,10 @@ namespace FinalNav.Sample.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
-            FinalNavigator.Instance.RegisterService<IPlatformDependentService, AndroidPlatformService>();
+            var ioc = new FinalIoc();
+            ioc.RegisterService<IPlatformDependentService, AndroidPlatformService>();
 
-            LoadApplication(new App());
+            LoadApplication(new App(ioc));
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
