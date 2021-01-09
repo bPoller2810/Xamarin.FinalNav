@@ -13,10 +13,14 @@ namespace Xamarin.FinalNav
     {
 
         #region private member
-        public bool Initialized { get; private set; }
         private readonly Application _app;
         private INavigation _navigation;
         private readonly FinalIoc _iocContainer;
+        #endregion
+
+        #region properties
+
+        public bool Initialized { get; private set; }
         #endregion
 
         #region ctor

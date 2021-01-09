@@ -10,6 +10,7 @@
 		<Description>Get your Xamarin.Forms Pages and ViewModels into the real DI world.</Description>
 		<RepositoryUrl>https://github.com/bPoller2810/Xamarin.FinalNav</RepositoryUrl>
 		<RepositoryType>https://github.com/bPoller2810/Xamarin.FinalNav</RepositoryType>
+		<Version>1.1.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

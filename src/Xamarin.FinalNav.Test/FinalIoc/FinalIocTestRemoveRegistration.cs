@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xamarin.FinalNav.Test.Models.TestPages;
 using Xamarin.FinalNav.Test.Models.TestServices;
@@ -22,7 +23,7 @@ namespace Xamarin.FinalNav.Test
 
             _ioc = new FinalIoc();
 
-            _ioc.RegisterService<INavigationService>(new FinalNavigator(new Application(), _ioc));
+            _ioc.RegisterService<INavigationService, FinalNavigator>();
 
             _ioc.RegisterService<ITestService, TestService>();
             _ioc.RegisterService<ITest2Service, Test2Service>();
@@ -37,7 +38,7 @@ namespace Xamarin.FinalNav.Test
         {
             Assert.IsTrue(_ioc.RemoveService<ITestService>());
             Assert.AreEqual(2, _ioc._services.Count);
-            Assert.AreEqual(typeof(ITest2Service), _ioc._services[1].ServiceType);
+            Assert.IsFalse(_ioc._services.Any(s => s.ServiceType.Equals(typeof(ITestService))));
         }
 
         [Test]
@@ -52,6 +53,7 @@ namespace Xamarin.FinalNav.Test
         {
             Assert.IsFalse(_ioc.RemoveService<INavigationService>());
             Assert.AreEqual(3, _ioc._services.Count);
+            Assert.IsTrue(_ioc._services.Any(s => s.ServiceType.Equals(typeof(INavigationService))));
         }
 
         [Test]
