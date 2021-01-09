@@ -13,29 +13,34 @@ namespace Xamarin.FinalNav
     {
 
         #region private member
-        private readonly Application _app;
-        private INavigation _navigation;
+        internal readonly Application _app;
+        internal INavigation _navigation;
         private readonly FinalIoc _iocContainer;
         #endregion
 
         #region properties
-
         public bool Initialized { get; private set; }
         #endregion
 
         #region ctor
         public FinalNavigator(Application app, FinalIoc iocContainer)
         {
-            _iocContainer = iocContainer;
-            if (!_iocContainer.IsRegistered<INavigationService>())
-            {
-                _iocContainer.RegisterService<INavigationService>(this);
-            }
             if (app is null)
             {
                 throw new ArgumentNullException(nameof(app));
             }
+            if(iocContainer is null)
+            {
+                throw new ArgumentNullException(nameof(iocContainer));
+            }
+
             _app = app;
+            _iocContainer = iocContainer;
+
+            if (!_iocContainer.IsRegistered<INavigationService>())
+            {
+                _iocContainer.RegisterService<INavigationService>(this);
+            }
         }
         #endregion
 
@@ -59,6 +64,17 @@ namespace Xamarin.FinalNav
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
             var page = _iocContainer.GetPage<TPage>(userParameters);
+            await _navigation.PushAsync(page);
+        }
+        public async Task PushAsync<TPage,TViewModel>(params NavigationParameter[] userParameters)
+            where TPage : Page
+            where TViewModel : INotifyPropertyChanged
+        {
+            if (!Initialized)
+            {
+                throw new InvalidOperationException("FinalNavigator is not initialized");
+            }
+            var page = _iocContainer.GetPage<TPage,TViewModel>(userParameters);
             await _navigation.PushAsync(page);
         }
         public async Task PopAsync()
@@ -88,6 +104,17 @@ namespace Xamarin.FinalNav
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
             var page = _iocContainer.GetPage<TPage>(userParameters);
+            await _navigation.PushModalAsync(page);
+        }
+        public async Task PushModalAsync<TPage,TViewModel>(params NavigationParameter[] userParameters)
+            where TPage : Page
+            where TViewModel : INotifyPropertyChanged
+        {
+            if (!Initialized)
+            {
+                throw new InvalidOperationException("FinalNavigator is not initialized");
+            }
+            var page = _iocContainer.GetPage<TPage,TViewModel>(userParameters);
             await _navigation.PushModalAsync(page);
         }
         public async Task PopModalAsync()
