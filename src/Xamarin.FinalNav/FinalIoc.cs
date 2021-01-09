@@ -29,7 +29,7 @@ namespace Xamarin.FinalNav
             var type = typeof(TType);
 
             if (_services.Any(s => s.ServiceType.Equals(type))) { return true; }
-            if (_pages.All(p => p.PageType.Equals(type))) { return true; }
+            if (_pages.Any(p => p.PageType.Equals(type))) { return true; }
 
             return false;
         }

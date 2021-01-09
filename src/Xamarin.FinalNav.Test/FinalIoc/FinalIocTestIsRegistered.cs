@@ -15,7 +15,9 @@ namespace Xamarin.FinalNav.Test
         {
             _ioc = new FinalIoc();
             _ioc.RegisterPage<TestPage, TestViewModel>();
+            _ioc.RegisterPage<Test2Page, TestViewModel>();
             _ioc.RegisterService<ITestService, TestService>();
+            _ioc.RegisterService<ITest2Service, Test2Service>();
         }
 
         [Test]
@@ -27,7 +29,7 @@ namespace Xamarin.FinalNav.Test
         [Test]
         public void TestIsRegisteredPageNotRegistered()
         {
-            Assert.IsFalse(_ioc.IsRegistered<Test2Page>());
+            Assert.IsFalse(_ioc.IsRegistered<Test3Page>());
         }
 
         [Test]
@@ -39,7 +41,7 @@ namespace Xamarin.FinalNav.Test
         [Test]
         public void TestIsRegisteredServiceNotRegistered()
         {
-            Assert.IsFalse(_ioc.IsRegistered<ITest2Service>());
+            Assert.IsFalse(_ioc.IsRegistered<ITest3Service>());
         }
 
     }
