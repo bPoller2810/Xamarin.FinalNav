@@ -3,53 +3,66 @@
 Get your Xamarin.Forms Pages and ViewModels into the real DI world.
 
 ![Nuget](https://img.shields.io/nuget/v/Xamarin.FinalNav?logo=NuGet)
-
 ![Tests](https://github.com/bpoller2810/Xamarin.FinalNav/workflows/Tests/badge.svg)
 
 ## How to:
-
-1. Clean the State in case you want to reuse your Activity/AppDelegate
+1. Create your container at your Platform
 2. Register your platform Services
-3. Register your shared Services
-4. Register your Pages
-5. Initialize the Navigation
-6. Navigate like a Pro 😎
+3. Hand the IoC container to your App
+4. Register your shared Services
+5. Register your Pages
+6. Initialize the Navigation
+7. Navigate like a Pro 😎
+
+ Note: All files and Lines here base on the Sample project
+ 
 ---
-### 1 CleanSystem [MainActivity.cs](sample/FinalNav.Sample.Android/MainActivity.cs) - OnCreate - Line 25 
+### 1 new Ioc container [MainActivity.cs](sample/FinalNav.Sample.Android/MainActivity.cs)
 ```c#
-FinalNavigator.Instance.CleanSystem();
+var ioc = new FinalIoc();
 ```
+
 ---
-### 2 RegisterService [MainActivity.cs](sample/FinalNav.Sample.Android/MainActivity.cs) - OnCreate - Line 35 
-- [IPlatformDependentService](sample/FinalNav.Sample/Services/IPlatformDependentService.cs)
-- [AndroidPlatformService](sample/FinalNav.Sample.Android/Service/AndroidPlatformService.cs)
+### 2 Register platrform services [MainActivity.cs](sample/FinalNav.Sample.Android/MainActivity.cs)
 ```c#
-FinalNavigator.Instance.RegisterService<IPlatformDependentService, AndroidPlatformService>();
+ioc.RegisterService<IPlatformDependentService, AndroidPlatformService>();
 ```
+
 ---
-### 3 RegisterService [App.xaml.cs](sample/FinalNav.Sample/App.xaml.cs) - Ctor - Line 17 
-- [IDemoService](sample/FinalNav.Sample/Services/IDemoService.cs)
-- [DefaultDemoService](sample/FinalNav.Sample/Services/DefaultDemoService.cs)
+### 3 LoadApplication [MainActivity.cs](sample/FinalNav.Sample.Android/MainActivity.cs)
 ```c#
-FinalNavigator.Instance.RegisterService<IDemoService, DefaultDemoService>();;
+LoadApplication(new App(ioc));
 ```
+Note: "App.xaml.cs" needs the FinalIoc as constructor parameter
+
 ---
-### 4 RegisterPage [App.xaml.cs](sample/FinalNav.Sample/App.xaml.cs) - Ctor - Line 19 
-- [LoginPage](sample/FinalNav.Sample/Pages/UserPage.xaml)
-- [LoginPageViewModel](sample/FinalNav.Sample/ViewModels/LoginPageViewModel.cs)
+### 4 Register common code services [App.xaml.cs](sample/FinalNav.Sample/App.xaml.cs) 
 ```c#
-FinalNavigator.Instance.RegisterPage<LoginPage, LoginPageViewModel>();
+container.RegisterService<IDemoService, DefaultDemoService>();
 ```
+
 ---
-### 5 InitializeRoot [App.xaml.cs](sample/FinalNav.Sample/App.xaml.cs) - Ctor - Line 22 
-- [LoginPage](sample/FinalNav.Sample/Pages/UserPage.xaml)
+### 5 Register pages [App.xaml.cs](sample/FinalNav.Sample/App.xaml.cs)
 ```c#
-FinalNavigator.Instance.InitializeRoot<LoginPage>(this);
+container.RegisterPage<LoginPage, LoginPageViewModel>();
+container.RegisterPage<UserPage, UserPageViewModel>();
 ```
+
 ---
-### 6 PushAsync [LoginPageViewModel](sample/FinalNav.Sample/ViewModels/LoginPageViewModel.cs) - ExecuteAsyncCommand - Line 33-37 
-- You can inject your runtime parameters into your Page and also your ViewModel (Note: Navigator matches by Order and Type) 
-- [LoginPageViewModel](sample/FinalNav.Sample/ViewModels/LoginPageViewModel.cs) (See the comments on the multible Constructors, where the Username can be injected)
+### 6 Build the Navigator [App.xaml.cs](sample/FinalNav.Sample/App.xaml.cs) 
+```c#
+new FinalNavigator(this, container).Build<LoginPage>();
+```
+
+---
+### 7 Navigate [LoginPageViewModel.cs](sample/FinalNav.Sample/ViewModels/LoginPageViewModel.cs)
+
+To be able to Navigate include the "INavigationService" interface in the Page/ViewModel constructor:
+```c#
+public LoginPageViewModel(INavigationService navigationService)
+```
+
+Use the NavigationService to navigate further with all your services always on hand
 ```c#
 await FinalNavigator.Instance.PushAsync<UserPage>(new NavigationParameter
 {
@@ -57,6 +70,12 @@ await FinalNavigator.Instance.PushAsync<UserPage>(new NavigationParameter
     Parameter = Username,
 });
 ```
+Note you also be able to use the following class constructors:
+```c#
+public PageParameter(object parameter)
+public ViewModelParameter(object parameter)
+```
+
 ---
 ## NavigationMethods:
 All methods get invoked on App.MainPage.Navigation
