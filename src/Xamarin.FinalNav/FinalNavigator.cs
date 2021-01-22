@@ -12,10 +12,11 @@ namespace Xamarin.FinalNav
     public sealed class FinalNavigator : INavigationService
     {
 
-        #region private member
+        #region private/internal member
         internal readonly Application _app;
         internal INavigation _navigation;
         private readonly FinalIoc _iocContainer;
+        internal NavigationPage _navigationPage;
         #endregion
 
         #region properties
@@ -29,7 +30,7 @@ namespace Xamarin.FinalNav
             {
                 throw new ArgumentNullException(nameof(app));
             }
-            if(iocContainer is null)
+            if (iocContainer is null)
             {
                 throw new ArgumentNullException(nameof(iocContainer));
             }
@@ -44,12 +45,29 @@ namespace Xamarin.FinalNav
         }
         #endregion
 
-        #region public init
-        public void Build<TRootPage>()
+        #region init
+        public void Build<TRootPage>(Action<NavigationPage> navigationPageinit = null)
             where TRootPage : Page
         {
             var page = _iocContainer.GetPage<TRootPage>();
-            _app.MainPage = new NavigationPage(page);
+            FinishInit(page, navigationPageinit);
+        }
+        public void Build<TRootPage, TRootViewModel>(Action<NavigationPage> navigationPageinit = null)
+            where TRootPage : Page
+            where TRootViewModel : INotifyPropertyChanged
+        {
+            var page = _iocContainer.GetPage<TRootPage, TRootViewModel>();
+            FinishInit(page, navigationPageinit);
+        }
+
+        private void FinishInit(Page page, Action<NavigationPage> navigationPageinit = null)
+        {
+            _navigationPage = new NavigationPage(page);
+            if (navigationPageinit is not null)
+            {
+                navigationPageinit(_navigationPage);
+            }
+            _app.MainPage = _navigationPage;
             _navigation = _app.MainPage.Navigation;
             Initialized = true;
         }
@@ -66,7 +84,7 @@ namespace Xamarin.FinalNav
             var page = _iocContainer.GetPage<TPage>(userParameters);
             await _navigation.PushAsync(page);
         }
-        public async Task PushAsync<TPage,TViewModel>(params NavigationParameter[] userParameters)
+        public async Task PushAsync<TPage, TViewModel>(params NavigationParameter[] userParameters)
             where TPage : Page
             where TViewModel : INotifyPropertyChanged
         {
@@ -74,7 +92,7 @@ namespace Xamarin.FinalNav
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
-            var page = _iocContainer.GetPage<TPage,TViewModel>(userParameters);
+            var page = _iocContainer.GetPage<TPage, TViewModel>(userParameters);
             await _navigation.PushAsync(page);
         }
         public async Task PopAsync()
@@ -106,7 +124,7 @@ namespace Xamarin.FinalNav
             var page = _iocContainer.GetPage<TPage>(userParameters);
             await _navigation.PushModalAsync(page);
         }
-        public async Task PushModalAsync<TPage,TViewModel>(params NavigationParameter[] userParameters)
+        public async Task PushModalAsync<TPage, TViewModel>(params NavigationParameter[] userParameters)
             where TPage : Page
             where TViewModel : INotifyPropertyChanged
         {
@@ -114,7 +132,7 @@ namespace Xamarin.FinalNav
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
-            var page = _iocContainer.GetPage<TPage,TViewModel>(userParameters);
+            var page = _iocContainer.GetPage<TPage, TViewModel>(userParameters);
             await _navigation.PushModalAsync(page);
         }
         public async Task PopModalAsync()
