@@ -91,6 +91,15 @@ namespace Xamarin.FinalNav
             {
                 il.Appearing();
             }
+
+            if (page is IAsyncLifecycle ialp)
+            {
+                await ialp.AppearingAsync();
+            }
+            else if (page is ILifecycle ilp)
+            {
+                ilp.Appearing();
+            }
             await _navigation.PushAsync(page);
         }
         public async Task PushAsync<TPage, TViewModel>(params NavigationParameter[] userParameters)
@@ -114,6 +123,15 @@ namespace Xamarin.FinalNav
             {
                 il.Appearing();
             }
+
+            if (page is IAsyncLifecycle ialp)
+            {
+                await ialp.AppearingAsync();
+            }
+            else if (page is ILifecycle ilp)
+            {
+                ilp.Appearing();
+            }
             await _navigation.PushAsync(page);
         }
         public async Task PopAsync()
@@ -135,6 +153,15 @@ namespace Xamarin.FinalNav
             {
                 il.Disappearing();
             }
+
+            if (page is IAsyncLifecycle ialp)
+            {
+                await ialp.DisappearingAsync();
+            }
+            else if (page is ILifecycle ilp)
+            {
+                ilp.Disappearing();
+            }
             await _navigation.PopAsync();
         }
         public async Task PopToRootAsync()
@@ -155,6 +182,15 @@ namespace Xamarin.FinalNav
             else if (page.BindingContext is ILifecycle il)
             {
                 il.Disappearing();
+            }
+
+            if (page is IAsyncLifecycle ialp)
+            {
+                await ialp.DisappearingAsync();
+            }
+            else if (page is ILifecycle ilp)
+            {
+                ilp.Disappearing();
             }
             await _navigation.PopToRootAsync();
         }
@@ -181,6 +217,15 @@ namespace Xamarin.FinalNav
             {
                 il.Appearing();
             }
+
+            if (page is IAsyncLifecycle ialp)
+            {
+                await ialp.AppearingAsync();
+            }
+            else if (page is ILifecycle ilp)
+            {
+                ilp.Appearing();
+            }
             await _navigation.PushModalAsync(page);
         }
         public async Task PushModalAsync<TPage, TViewModel>(params NavigationParameter[] userParameters)
@@ -204,6 +249,15 @@ namespace Xamarin.FinalNav
             {
                 il.Appearing();
             }
+
+            if (page is IAsyncLifecycle ialp)
+            {
+                await ialp.AppearingAsync();
+            }
+            else if (page is ILifecycle ilp)
+            {
+                ilp.Appearing();
+            }
             await _navigation.PushModalAsync(page);
         }
         public async Task PopModalAsync()
@@ -224,6 +278,15 @@ namespace Xamarin.FinalNav
             else if (page.BindingContext is ILifecycle il)
             {
                 il.Disappearing();
+            }
+
+            if (page is IAsyncLifecycle ialp)
+            {
+                await ialp.DisappearingAsync();
+            }
+            else if (page is ILifecycle ilp)
+            {
+                ilp.Disappearing();
             }
             await _navigation.PopModalAsync();
         }
