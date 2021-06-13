@@ -14,6 +14,8 @@ namespace Xamarin.FinalNav
         internal INavigation _navigation;
         private readonly FinalIoc _iocContainer;
         internal NavigationPage _navigationPage;
+
+        internal Action<FinalIoc> _preBuildAction;
         #endregion
 
         #region properties
@@ -59,6 +61,8 @@ namespace Xamarin.FinalNav
 
         private void FinishInit(Page page, Action<NavigationPage> navigationPageinit = null)
         {
+            _preBuildAction?.Invoke(_iocContainer);// pre build action
+
             _navigationPage = new NavigationPage(page);
             if (navigationPageinit is not null)
             {
