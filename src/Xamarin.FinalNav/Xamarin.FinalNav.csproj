@@ -5,12 +5,12 @@
 		<LangVersion>9.0</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Bernhard Pollerspöck</Authors>
-		<Company>Bernhard PollerspöckBernhard Pollerspöck</Company>
+		<Company>Bernhard Pollerspöck</Company>
 		<Copyright>Bernhard Pollerspöck</Copyright>
 		<Description>Get your Xamarin.Forms Pages and ViewModels into the real DI world.</Description>
 		<RepositoryUrl>https://github.com/bPoller2810/Xamarin.FinalNav</RepositoryUrl>
 		<RepositoryType>https://github.com/bPoller2810/Xamarin.FinalNav</RepositoryType>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

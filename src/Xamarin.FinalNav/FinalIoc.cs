@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using Xamarin.FinalNav.Containers;
 using Xamarin.Forms;
 

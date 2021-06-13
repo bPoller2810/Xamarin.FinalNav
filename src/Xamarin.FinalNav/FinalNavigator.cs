@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Xamarin.FinalNav.Containers;
 using Xamarin.Forms;
 
 namespace Xamarin.FinalNav
@@ -82,6 +79,18 @@ namespace Xamarin.FinalNav
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
             var page = _iocContainer.GetPage<TPage>(userParameters);
+            if (page is null)
+            {
+                throw new InvalidOperationException("Page not found");
+            }
+            else if (page.BindingContext is IAsyncLifecycle ial)
+            {
+                await ial.AppearingAsync();
+            }
+            else if (page.BindingContext is ILifecycle il)
+            {
+                il.Appearing();
+            }
             await _navigation.PushAsync(page);
         }
         public async Task PushAsync<TPage, TViewModel>(params NavigationParameter[] userParameters)
@@ -93,6 +102,18 @@ namespace Xamarin.FinalNav
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
             var page = _iocContainer.GetPage<TPage, TViewModel>(userParameters);
+            if (page is null)
+            {
+                throw new InvalidOperationException("Page not found");
+            }
+            else if (page.BindingContext is IAsyncLifecycle ial)
+            {
+                await ial.AppearingAsync();
+            }
+            else if (page.BindingContext is ILifecycle il)
+            {
+                il.Appearing();
+            }
             await _navigation.PushAsync(page);
         }
         public async Task PopAsync()
@@ -101,6 +122,19 @@ namespace Xamarin.FinalNav
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
+            var page = _navigation.NavigationStack.Last();
+            if (page is null)
+            {
+                throw new InvalidOperationException("Page not found");
+            }
+            else if (page.BindingContext is IAsyncLifecycle ial)
+            {
+                await ial.DisappearingAsync();
+            }
+            else if (page.BindingContext is ILifecycle il)
+            {
+                il.Disappearing();
+            }
             await _navigation.PopAsync();
         }
         public async Task PopToRootAsync()
@@ -108,6 +142,19 @@ namespace Xamarin.FinalNav
             if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
+            }
+            var page = _navigation.NavigationStack.Last();
+            if (page is null)
+            {
+                throw new InvalidOperationException("Page not found");
+            }
+            else if (page.BindingContext is IAsyncLifecycle ial)
+            {
+                await ial.DisappearingAsync();
+            }
+            else if (page.BindingContext is ILifecycle il)
+            {
+                il.Disappearing();
             }
             await _navigation.PopToRootAsync();
         }
@@ -122,6 +169,18 @@ namespace Xamarin.FinalNav
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
             var page = _iocContainer.GetPage<TPage>(userParameters);
+            if (page is null)
+            {
+                throw new InvalidOperationException("Page not found");
+            }
+            else if (page.BindingContext is IAsyncLifecycle ial)
+            {
+                await ial.AppearingAsync();
+            }
+            else if (page.BindingContext is ILifecycle il)
+            {
+                il.Appearing();
+            }
             await _navigation.PushModalAsync(page);
         }
         public async Task PushModalAsync<TPage, TViewModel>(params NavigationParameter[] userParameters)
@@ -133,6 +192,18 @@ namespace Xamarin.FinalNav
                 throw new InvalidOperationException("FinalNavigator is not initialized");
             }
             var page = _iocContainer.GetPage<TPage, TViewModel>(userParameters);
+            if (page is null)
+            {
+                throw new InvalidOperationException("Page not found");
+            }
+            else if (page.BindingContext is IAsyncLifecycle ial)
+            {
+                await ial.AppearingAsync();
+            }
+            else if (page.BindingContext is ILifecycle il)
+            {
+                il.Appearing();
+            }
             await _navigation.PushModalAsync(page);
         }
         public async Task PopModalAsync()
@@ -140,6 +211,19 @@ namespace Xamarin.FinalNav
             if (!Initialized)
             {
                 throw new InvalidOperationException("FinalNavigator is not initialized");
+            }
+            var page = _navigation.ModalStack.Last();
+            if (page is null)
+            {
+                throw new InvalidOperationException("Page not found");
+            }
+            else if (page.BindingContext is IAsyncLifecycle ial)
+            {
+                await ial.DisappearingAsync();
+            }
+            else if (page.BindingContext is ILifecycle il)
+            {
+                il.Disappearing();
             }
             await _navigation.PopModalAsync();
         }
